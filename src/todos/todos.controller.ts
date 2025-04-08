@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { Todo } from './interface/todo.model';
@@ -26,7 +27,11 @@ export class TodosController {
   }
 
   @Post()
-  create(@Body() createDtoTodo: CreateDtoTodo): Todo {
+  create(
+    @Body() createDtoTodo: CreateDtoTodo,
+    @Query('name') name: string,
+  ): Todo {
+    console.log(name);
     return this.todosService.create(createDtoTodo);
   }
 
