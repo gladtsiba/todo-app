@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostRepository } from './post.repository';
+import { PostMapper } from './mappers/post.mapper';
 
 @Injectable()
 export class PostService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(private postRepository: PostRepository) {}
+
+  async create(createPostDto: CreatePostDto) {
+    const modelData = await this.postRepository.create(
+      PostMapper.fromCretePostDto(createPostDto),
+    );
+    return PostMapper.toEntity(modelData);
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async findAll() {
+    return (await this.postRepository.findAll()).map((e) =>
+      PostMapper.toEntity(e),
+    );
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} post`;
+    return this.postRepository.findOne(id);
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+    return this.postRepository.update(
+      id,
+      PostMapper.fromUpdatePostDto(updatePostDto),
+    );
   }
 
   remove(id: number) {
-    return `This action removes a #${id} post`;
+    return this.postRepository.remove(id);
   }
 }
